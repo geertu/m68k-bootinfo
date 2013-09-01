@@ -433,7 +433,7 @@ static struct record *read_next_record(int file)
 {
 	char buf[2];
 	int error;
-	unsigned int tag, size;
+	unsigned int tag, rawsize, size;
 	struct record *record;
 
 	error = read_bytes(file, buf, sizeof(buf));
@@ -448,13 +448,14 @@ static struct record *read_next_record(int file)
 	if (error)
 		return NULL;
 
-	size = get_be16(buf);
-	if (size < 4) {
-		fprintf(stderr, "Invalid size %u for tag 0x%04x\n", size, tag);
+	rawsize = get_be16(buf);
+	if (rawsize < 4 || rawsize % 4) {
+		fprintf(stderr, "Invalid size %u for tag 0x%04x\n", rawsize,
+			tag);
 		exit(-1);
 	}
 
-	size -= 4;
+	size = rawsize - 4;
 	record = malloc(sizeof(*record) + size);
 	if (!record) {
 		perror("No memory for record");
@@ -495,7 +496,7 @@ static struct record *read_next_record(int file)
 			exit(-1);
 		}
 	} else if (size < type_sizes[record->type]) {
-		fprintf(stderr, "Unexpected size %u for tag %s\n", size,
+		fprintf(stderr, "Unexpected size %u for tag %s\n", rawsize,
 			record->name);
 		exit(-1);
 	}
