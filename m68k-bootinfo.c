@@ -43,6 +43,17 @@ enum type {
 	TYPE_VME_BOARDINFO,	/* VME board information */
 };
 
+static int type_sizes[] = {
+	[TYPE_UNKNOWN]		= 0,	/* unknown */
+	[TYPE_U_CHAR]		= 1,
+	[TYPE_U_SHORT]		= 2,
+	[TYPE_U_LONG]		= 4,
+	[TYPE_STRING]		= -1,	/* variable length */
+	[TYPE_MEM_INFO]		= 8,
+	[TYPE_AMIGA_CONFIG_DEV] = 68,
+	[TYPE_VME_BOARDINFO]	= 32,
+};
+
 struct record {
 	uint16_t tag;
 	uint16_t size;	/* size of data at end of struct */
@@ -476,6 +487,18 @@ static struct record *read_next_record(int file)
 	if (!parse_record(record))
 		snprintf(record->name, sizeof(record->name), "0x%04x",
 			 record->tag);
+
+	if (record->type == TYPE_STRING) {
+		if (!memchr(record->data, '\0', size)) {
+			fprintf(stderr, "Unterminated string for tag %s\n",
+				record->name);
+			exit(-1);
+		}
+	} else if (size < type_sizes[record->type]) {
+		fprintf(stderr, "Unexpected size %u for tag %s\n", size,
+			record->name);
+		exit(-1);
+	}
 
 	return record;
 }
