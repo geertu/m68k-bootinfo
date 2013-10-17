@@ -16,12 +16,24 @@
 #include <unistd.h>
 #include <bsd/string.h>
 
-#include "amigahw.h" // FIXME
-#include "apollohw.h" // FIXME
-#include "bootinfo.h" // FIXME
-#include "hp300hw.h" // FIXME
-#include "macintosh.h" // FIXME
-#include "setup.h" // FIXME
+#ifndef USE_M68K_HEADERS
+#include <asm/bootinfo.h>
+#include <asm/bootinfo-amiga.h>
+#include <asm/bootinfo-apollo.h>
+#include <asm/bootinfo-atari.h>
+#include <asm/bootinfo-hp300.h>
+#include <asm/bootinfo-mac.h>
+#include <asm/bootinfo-vme.h>
+#else
+#include "m68k-headers/asm/bootinfo.h"
+#include "m68k-headers/asm/bootinfo-amiga.h"
+#include "m68k-headers/asm/bootinfo-apollo.h"
+#include "m68k-headers/asm/bootinfo-atari.h"
+#include "m68k-headers/asm/bootinfo-hp300.h"
+#include "m68k-headers/asm/bootinfo-mac.h"
+#include "m68k-headers/asm/bootinfo-vme.h"
+#endif
+
 
 #define BOOTINFO_FILE	"/proc/bootinfo"
 
@@ -178,10 +190,10 @@ static const struct record_def apollo_records[] = {
 };
 
 static const struct map atari_mch_cookies[] = {
-	{ ATARI_MCH_ST, "ST" },
-	{ ATARI_MCH_STE, "STE" },
-	{ ATARI_MCH_TT, "TT" },
-	{ ATARI_MCH_FALCON, "FALCON" },
+	{ ATARI_MCH_ST << 16, "ST" },
+	{ ATARI_MCH_STE << 16, "STE" },
+	{ ATARI_MCH_TT << 16, "TT" },
+	{ ATARI_MCH_FALCON << 16, "FALCON" },
 	{ 0, NULL },
 };
 
