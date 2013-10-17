@@ -69,8 +69,10 @@ struct map {
 };
 
 static const struct map cputypes[] = {
+#if 0 // Not yet defined in any public version
 	{ CPU_68000, "68000" },
 	{ CPU_68010, "68010" },
+#endif
 	{ CPU_68020, "68020" },
 	{ CPU_68030, "68030" },
 	{ CPU_68040, "68040" },
