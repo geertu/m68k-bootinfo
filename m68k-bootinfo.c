@@ -68,7 +68,7 @@ static int type_sizes[] = {
 
 struct record {
 	uint16_t tag;
-	uint16_t size;	/* size of data at end of struct */
+	uint16_t size;		/* size of data at end of struct */
 	enum type type;
 	char name[32];
 	const char *desc;	/* description for data value */
