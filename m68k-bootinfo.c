@@ -46,9 +46,9 @@ static const char *opt_bootinfo = BOOTINFO_FILE;
 
 enum type {
 	TYPE_UNKNOWN,
-	TYPE_U_CHAR,		/* 8-bit byte */
-	TYPE_U_SHORT,		/* 16-bit big endian */
-	TYPE_U_LONG,		/* 32-bit big endian */
+	TYPE_U8,		/* 8-bit byte */
+	TYPE_BE16,		/* 16-bit big endian */
+	TYPE_BE32,		/* 32-bit big endian */
 	TYPE_STRING,		/* zero-terminated string */
 	TYPE_MEM_INFO,		/* struct mem_info */
 	TYPE_AMIGA_CONFIG_DEV,	/* Amiga struct ConfigDev */
@@ -57,9 +57,9 @@ enum type {
 
 static int type_sizes[] = {
 	[TYPE_UNKNOWN]		= 0,	/* unknown */
-	[TYPE_U_CHAR]		= 1,
-	[TYPE_U_SHORT]		= 2,
-	[TYPE_U_LONG]		= 4,
+	[TYPE_U8]		= 1,
+	[TYPE_BE16]		= 2,
+	[TYPE_BE32]		= 4,
 	[TYPE_STRING]		= -1,	/* variable length */
 	[TYPE_MEM_INFO]		= 8,
 	[TYPE_AMIGA_CONFIG_DEV] = 68,
@@ -124,10 +124,10 @@ struct record_def {
 };
 
 static const struct record_def m68k_records[] = {
-	{ BI_MACHTYPE,		"machtype",	TYPE_U_LONG },
-	{ BI_CPUTYPE,		"cputype",	TYPE_U_LONG,	cputypes },
-	{ BI_FPUTYPE,		"fputype",	TYPE_U_LONG,	fputypes },
-	{ BI_MMUTYPE,		"mmutype",	TYPE_U_LONG,	mmutypes },
+	{ BI_MACHTYPE,		"machtype",	TYPE_BE32 },
+	{ BI_CPUTYPE,		"cputype",	TYPE_BE32,	cputypes },
+	{ BI_FPUTYPE,		"fputype",	TYPE_BE32,	fputypes },
+	{ BI_MMUTYPE,		"mmutype",	TYPE_BE32,	mmutypes },
 	{ BI_MEMCHUNK,		"memchunk",	TYPE_MEM_INFO },
 	{ BI_RAMDISK,		"ramdisk",	TYPE_MEM_INFO },
 	{ BI_COMMAND_LINE,	"command_line",	TYPE_STRING },
@@ -163,14 +163,14 @@ static const struct map amiga_chipsets[] = {
 };
 
 static const struct record_def amiga_records[] = {
-	{ BI_AMIGA_MODEL,	"model",	TYPE_U_LONG,	amiga_models },
+	{ BI_AMIGA_MODEL,	"model",	TYPE_BE32,	amiga_models },
 	{ BI_AMIGA_AUTOCON,	"autocon",	TYPE_AMIGA_CONFIG_DEV },
-	{ BI_AMIGA_CHIP_SIZE,	"chip_size",	TYPE_U_LONG },
-	{ BI_AMIGA_VBLANK,	"vblank",	TYPE_U_CHAR },
-	{ BI_AMIGA_PSFREQ,	"psfreq",	TYPE_U_CHAR },
-	{ BI_AMIGA_ECLOCK,	"eclock",	TYPE_U_LONG },
-	{ BI_AMIGA_CHIPSET,	"chipset",	TYPE_U_LONG,	amiga_chipsets },
-	{ BI_AMIGA_SERPER,	"serper",	TYPE_U_SHORT },
+	{ BI_AMIGA_CHIP_SIZE,	"chip_size",	TYPE_BE32 },
+	{ BI_AMIGA_VBLANK,	"vblank",	TYPE_U8 },
+	{ BI_AMIGA_PSFREQ,	"psfreq",	TYPE_U8 },
+	{ BI_AMIGA_ECLOCK,	"eclock",	TYPE_BE32 },
+	{ BI_AMIGA_CHIPSET,	"chipset",	TYPE_BE32,	amiga_chipsets },
+	{ BI_AMIGA_SERPER,	"serper",	TYPE_BE16 },
 	{ BI_LAST,		"last",		TYPE_UNKNOWN },
 };
 
@@ -185,7 +185,7 @@ static const struct map apollo_models[] = {
 };
 
 static const struct record_def apollo_records[] = {
-	{ BI_APOLLO_MODEL,	"model",	TYPE_U_LONG,	apollo_models },
+	{ BI_APOLLO_MODEL,	"model",	TYPE_BE32,	apollo_models },
 	{ BI_LAST,		"last",		TYPE_UNKNOWN },
 };
 
@@ -206,8 +206,8 @@ static const struct map atari_mch_types[] = {
 };
 
 static const struct record_def atari_records[] = {
-	{ BI_ATARI_MCH_COOKIE,	"mch_cookie",	TYPE_U_LONG,	atari_mch_cookies },
-	{ BI_ATARI_MCH_TYPE,	"mch_type",	TYPE_U_LONG,	atari_mch_types },
+	{ BI_ATARI_MCH_COOKIE,	"mch_cookie",	TYPE_BE32,	atari_mch_cookies },
+	{ BI_ATARI_MCH_TYPE,	"mch_type",	TYPE_BE32,	atari_mch_types },
 	{ BI_LAST,		"last",		TYPE_UNKNOWN },
 };
 
@@ -232,9 +232,9 @@ static const struct map hp300_models[] = {
 };
 
 static const struct record_def hp300_records[] = {
-	{ BI_HP300_MODEL,	"model",	TYPE_U_LONG,	hp300_models },
-	{ BI_HP300_UART_SCODE,	"uart_scode",	TYPE_U_LONG },
-	{ BI_HP300_UART_ADDR,	"uart_addr",	TYPE_U_LONG },
+	{ BI_HP300_MODEL,	"model",	TYPE_BE32,	hp300_models },
+	{ BI_HP300_UART_SCODE,	"uart_scode",	TYPE_BE32 },
+	{ BI_HP300_UART_ADDR,	"uart_addr",	TYPE_BE32 },
 	{ BI_LAST,		"last",		TYPE_UNKNOWN },
 };
 
@@ -297,36 +297,36 @@ static const struct map mac_models[] = {
 };
 
 static const struct record_def mac_records[] = {
-	{ BI_MAC_MODEL,		"model",	TYPE_U_LONG,	mac_models },
-	{ BI_MAC_VADDR,		"vaddr",	TYPE_U_LONG },
-	{ BI_MAC_VDEPTH,	"vdepth",	TYPE_U_LONG },
-	{ BI_MAC_VROW,		"vrow",		TYPE_U_LONG },
-	{ BI_MAC_VDIM,		"vdim",		TYPE_U_LONG },
-	{ BI_MAC_VLOGICAL,	"vlogical",	TYPE_U_LONG },
-	{ BI_MAC_SCCBASE,	"sccbase",	TYPE_U_LONG },
-	{ BI_MAC_BTIME,		"btime",	TYPE_U_LONG },
-	{ BI_MAC_GMTBIAS,	"gmtbias",	TYPE_U_LONG },
-	{ BI_MAC_MEMSIZE,	"memsize",	TYPE_U_LONG },
-	{ BI_MAC_CPUID,		"cpuid",	TYPE_U_LONG },
-	{ BI_MAC_ROMBASE,	"rombase",	TYPE_U_LONG },
-	{ BI_MAC_VIA1BASE,	"via1base",	TYPE_U_LONG },
-	{ BI_MAC_VIA2BASE,	"via2base",	TYPE_U_LONG },
-	{ BI_MAC_VIA2TYPE,	"via2type",	TYPE_U_LONG },
-	{ BI_MAC_ADBTYPE,	"adbtype",	TYPE_U_LONG },
-	{ BI_MAC_ASCBASE,	"ascbase",	TYPE_U_LONG },
-	{ BI_MAC_SCSI5380,	"scsi5380",	TYPE_U_LONG },
-	{ BI_MAC_SCSIDMA,	"scsidma",	TYPE_U_LONG },
-	{ BI_MAC_SCSI5396,	"scsi5396",	TYPE_U_LONG },
-	{ BI_MAC_IDETYPE,	"idetype",	TYPE_U_LONG },
-	{ BI_MAC_IDEBASE,	"idebase",	TYPE_U_LONG },
-	{ BI_MAC_NUBUS,		"nubus",	TYPE_U_LONG },
-	{ BI_MAC_SLOTMASK,	"slotmask",	TYPE_U_LONG },
-	{ BI_MAC_SCCTYPE,	"scctype",	TYPE_U_LONG },
-	{ BI_MAC_ETHTYPE,	"ethtype",	TYPE_U_LONG },
-	{ BI_MAC_ETHBASE,	"ethbase",	TYPE_U_LONG },
-	{ BI_MAC_PMU,		"pmu",		TYPE_U_LONG },
-	{ BI_MAC_IOP_SWIM,	"iop_swim",	TYPE_U_LONG },
-	{ BI_MAC_IOP_ADB,	"iop_adb",	TYPE_U_LONG },
+	{ BI_MAC_MODEL,		"model",	TYPE_BE32,	mac_models },
+	{ BI_MAC_VADDR,		"vaddr",	TYPE_BE32 },
+	{ BI_MAC_VDEPTH,	"vdepth",	TYPE_BE32 },
+	{ BI_MAC_VROW,		"vrow",		TYPE_BE32 },
+	{ BI_MAC_VDIM,		"vdim",		TYPE_BE32 },
+	{ BI_MAC_VLOGICAL,	"vlogical",	TYPE_BE32 },
+	{ BI_MAC_SCCBASE,	"sccbase",	TYPE_BE32 },
+	{ BI_MAC_BTIME,		"btime",	TYPE_BE32 },
+	{ BI_MAC_GMTBIAS,	"gmtbias",	TYPE_BE32 },
+	{ BI_MAC_MEMSIZE,	"memsize",	TYPE_BE32 },
+	{ BI_MAC_CPUID,		"cpuid",	TYPE_BE32 },
+	{ BI_MAC_ROMBASE,	"rombase",	TYPE_BE32 },
+	{ BI_MAC_VIA1BASE,	"via1base",	TYPE_BE32 },
+	{ BI_MAC_VIA2BASE,	"via2base",	TYPE_BE32 },
+	{ BI_MAC_VIA2TYPE,	"via2type",	TYPE_BE32 },
+	{ BI_MAC_ADBTYPE,	"adbtype",	TYPE_BE32 },
+	{ BI_MAC_ASCBASE,	"ascbase",	TYPE_BE32 },
+	{ BI_MAC_SCSI5380,	"scsi5380",	TYPE_BE32 },
+	{ BI_MAC_SCSIDMA,	"scsidma",	TYPE_BE32 },
+	{ BI_MAC_SCSI5396,	"scsi5396",	TYPE_BE32 },
+	{ BI_MAC_IDETYPE,	"idetype",	TYPE_BE32 },
+	{ BI_MAC_IDEBASE,	"idebase",	TYPE_BE32 },
+	{ BI_MAC_NUBUS,		"nubus",	TYPE_BE32 },
+	{ BI_MAC_SLOTMASK,	"slotmask",	TYPE_BE32 },
+	{ BI_MAC_SCCTYPE,	"scctype",	TYPE_BE32 },
+	{ BI_MAC_ETHTYPE,	"ethtype",	TYPE_BE32 },
+	{ BI_MAC_ETHBASE,	"ethbase",	TYPE_BE32 },
+	{ BI_MAC_PMU,		"pmu",		TYPE_BE32 },
+	{ BI_MAC_IOP_SWIM,	"iop_swim",	TYPE_BE32 },
+	{ BI_MAC_IOP_ADB,	"iop_adb",	TYPE_BE32 },
 	{ BI_LAST,		"last",		TYPE_UNKNOWN },
 };
 
@@ -344,7 +344,7 @@ static const struct map vme_types[] = {
 };
 
 static const struct record_def vme_records[] = {
-	{ BI_VME_TYPE,		"type",		TYPE_U_LONG,	vme_types },
+	{ BI_VME_TYPE,		"type",		TYPE_BE32,	vme_types },
 	{ BI_VME_BRDINFO,	"brdinfo",	TYPE_VME_BOARDINFO },
 	{ BI_LAST,		"last",		TYPE_UNKNOWN },
 };
@@ -567,14 +567,14 @@ int main(int argc, char *argv[])
 		case TYPE_UNKNOWN:
 			printf("%s\n", record->name);
 			break;
-		case TYPE_U_CHAR:
+		case TYPE_U8:
 			printf("%s = %u\n", record->name, record->data[0]);
 			break;
-		case TYPE_U_SHORT:
+		case TYPE_BE16:
 			printf("%s = %u\n", record->name,
 			       get_be16(record->data));
 			break;
-		case TYPE_U_LONG:
+		case TYPE_BE32:
 			if (record->desc)
 				printf("%s = %s\n", record->name,
 				       record->desc);
