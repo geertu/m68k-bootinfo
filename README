@@ -1,4 +1,9 @@
 Linux/m68k bootinfo tool
+========================
+
+
+INSTALL
+-------
 
 Build on Linux/m68k:
 
@@ -16,3 +21,33 @@ kernel headers from a recent Linux/m68k tree:
     make headers_install
     cd /path/to/m68k-bootinfo/tree
     make M68K_HEADERS=/path/to/kernel/build/tree/usr/include
+
+
+USAGE
+-----
+
+# m68k-bootinfo -h
+
+m68k-bootinfo: [options]
+
+Valid options are:
+    -f, --file file  Specify bootinfo file
+                     (default: /proc/bootinfo)
+    -h, --help       Display this usage information
+
+# m68k-bootinfo
+machtype = atari
+cputype = 68040
+fputype = 68040
+mmutype = 68040
+memchunk of 0x00e00000 bytes at 0x00000000
+memchunk of 0x10000000 bytes at 0x01000000
+command_line = "root=/dev/hda1 video=atafb:tthigh debug=par console=tty0 BOOT_IMAGE=vmlinux"
+atari.mch_cookie = FALCON
+atari.mch_type = AB40
+#
+
+
+Have fun!
+
+Geert Uytterhoeven <geert@linux-m68k.org>
