@@ -1,0 +1,18 @@
+Linux/m68k bootinfo tool
+
+Build on Linux/m68k:
+
+    make
+
+Cross-compile for Linux/m68k:
+
+    make CROSS_COMPILE=m68k-linux-gnu-
+
+When building or cross-compiling for non-m68k, or for a Linux/m68k system
+lacking the new <asm/bootinfo*.h> headerfiles, you have to use the installed
+kernel headers from a recent Linux/m68k tree:
+
+    cd /path/to/kernel/build/tree
+    make headers_install
+    cd /path/to/m68k-bootinfo/tree
+    make M68K_HEADERS=/path/to/kernel/build/tree/usr/include
